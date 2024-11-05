@@ -1,0 +1,10 @@
+<?php
+include_once("connection.php");
+include_once("users.php");
+if(!isset($_POST['search']))
+  {
+    $admin->displayformsearch($conn);
+  }
+  else{
+      $admin->checkRecord($conn);
+  }
