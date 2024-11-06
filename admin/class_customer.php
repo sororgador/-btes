@@ -270,6 +270,7 @@ $customer = new Customer("JohnDoe", 1, "john@example.com", "password123",
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-direction: column;
             height: 100vh;
         }
         .form {
@@ -278,6 +279,7 @@ $customer = new Customer("JohnDoe", 1, "john@example.com", "password123",
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             width: 300px;
+            margin-bottom: 20px;
         }
         .form h2 {
             margin-bottom: 20px;
@@ -311,5 +313,20 @@ $customer = new Customer("JohnDoe", 1, "john@example.com", "password123",
         .form input[type="submit"]:hover {
             background-color: #218838;
         }
+        .notice {
+            margin-top: 20px;
+            text-align: center;
+            color: #007bff;
+            font-size: 18px;
+        }
+        .notice a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+        .notice a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
+<body>
