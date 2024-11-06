@@ -62,7 +62,7 @@ public function validateRegistrationForm($username, $password, $password2)
 ///////////end fun validateRegistrationForm/////////
 public function callvalidateregister($conn)
 {
-   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // استعادة المدخلات
         $username = $_POST['name'] ?? '';
         $password = $_POST['password'] ?? '';
@@ -71,23 +71,19 @@ public function callvalidateregister($conn)
         // التحقق من المدخلات
         $errors = $this->validateRegistrationForm($username, $password, $password2);
 
-        // إذا لم تكن هناك أخطاء، يمكنك متابعة التسجيل
+        // إذا لم تكن هناك أخطاء، يمكنك متابعة التسجيل في قاعدة البيانات
         if (empty($errors)) {
-            // هنا يمكنك تنفيذ عملية التسجيل في قاعدة البيانات
-            // مثال: 
-            // $query = "INSERT INTO users (username, password) VALUES (?, ?)";
-            // استخدم الـ $conn لإجراء العملية
-
-            echo "<p style='color:green;'>تم إنشاء الحساب بنجاح!</p>";
+            // استدعاء دالة التسجيل في قاعدة البيانات فقط إذا كانت المدخلات سليمة
+            $this->register($conn, $username, $password);
         } else {
-            // عرض الأخطاء
+            // عرض الأخطاء إذا كانت المدخلات غير صحيحة
             foreach ($errors as $error) {
                 echo "<p style='color:red;'>$error</p>";
             }
-      
         }
-   echo $this->register_form();
-  }
+    }
+    // عرض النموذج في النهاية
+    echo $this->register_form();
 }
 /////////////////////////////////////////////
 public function register($conn)
@@ -207,7 +203,7 @@ public function validateFormInsert($name, $email, $phone, $age, $qualification)
 //////////end fun validateFormInsert/////////
 public function clallvlidatinsert($conn)
 {
-  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // استعادة المدخلات
         $name = $_POST['name'] ?? '';
         $email = $_POST['email'] ?? '';
@@ -220,20 +216,17 @@ public function clallvlidatinsert($conn)
 
         // إذا لم تكن هناك أخطاء، يمكنك متابعة الإدخال في قاعدة البيانات
         if (empty($errors)) {
-            // هنا يمكنك تنفيذ عملية الإدخال في قاعدة البيانات
-            // مثال: 
-            // $query = "INSERT INTO users (name, email, phone, age, qualification) VALUES (?, ?, ?, ?, ?)";
-            // استخدم الـ $conn لإجراء العملية
-
-            echo "<p style='color:green;'>تم إدخال البيانات بنجاح!</p>";
+            // استدعاء دالة الإدخال إذا كانت البيانات سليمة
+            $this->insertcustomer($conn, $name, $email, $phone, $age, $qualification);
         } else {
             // عرض الأخطاء
             foreach ($errors as $error) {
                 echo "<p style='color:red;'>$error</p>";
             }
-       
+
+            
+        }
     }
-}
 }
 /////////end fun clallvlidatinsert////////
 public function insertcustomer($conn)
