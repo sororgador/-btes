@@ -2,37 +2,35 @@
 include_once(connection.php);
 include_once(users.php);
 class Admin extends User {
-	/////////////////////////////////////////////
 public function check($conn)
 {   
       $flag=0;  
-	  $u=$_POST['name'];   $p=$_POST['password']; $typ='admin';
+      $u=$_POST['name'];   
+      $p=$_POST['password']; 
+      $type='admin';
     try{
 	$sql="SELECT * FROM sign_in" ;
 	$rows=$conn->query($sql);
 	if($rows->rowCount() != 0)
 	{
 	while($row=$rows->fetch(PDO::FETCH_OBJ))
-	{
-		if(($row->username == $u) && ($row->Password == $p ))
+	  {
+		if(($row->username == $u) && ($row->Password == $p ) && (&row->type == $type))
 		{ 
- 
-			
-	       header('LOCATION:  /get/admin/managment.php');// تعديل
-			$flag=1;   break;
-			
+	            header('LOCATION:  /get/admin/managment.php');// تعديل
+			$flag=1;   break;	
 		}
-	}
+	   }
 	}
 	else 
-	    { 
-      echo "NO RECORD";
-	    }
+	{ 
+         echo "NO RECORD";
+         }
 	}
 	catch(PDOException $e) 
 	{
-    echo "Error: " . $e->getMessage();
-     }
+           echo "Error: " . $e->getMessage();
+         }
   if($flag==0){ echo " ادخالك غير صحيح";}
 }
 //////////////////////////////////////////////
@@ -45,8 +43,6 @@ public function check($conn)
   </form>
   <?php
 }
-
- 
 ////////////////////////////////////
 public function data_edit($conn)
 {
@@ -59,8 +55,8 @@ public function data_edit($conn)
 	   {
        $row=$rows->fetch(PDO::FETCH_OBJ);
 	        $adminName=$row->admin_name;
-            $adminEmail=$row->email;
-			$this->formupdate($conn,$adminName,$adminEmail);
+                $adminEmail=$row->email;
+	       $this->formupdate($conn,$adminName,$adminEmail);
 	   }
        else 
 	   {
