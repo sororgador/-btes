@@ -141,20 +141,29 @@ public function check($conn)
   if($flag==0){ echo " ادخالك غير صحيح";}
 }
 ////////////////////////////////////////////////////
-function formInsertCustomer($conn)
-{?>
-  <form action="#" method="post">
-  name: <input type="text" name="name"><br>
-  email: <input type="email" name="email"><br>
-  phone: <input type="text" name="number"><br>
-  age: <input type="text" name="age"><br>
-  qualification:<br>
-  <input type="radio" name="qualification" value="student">student<br>
-  <input type="radio" name="qualification" value="malitary">malitary<br>
-  <input type="radio" name="qualification" value="teacher">teacher<br>
-  <input type="radio" name="qualification" value="other">other<br>
-  <input type="submit" name="submit" value="submit">
-  </form>
+?>
+ <div class="form">
+    <h2>نموذج البيانات الشخصية</h2>
+    <form action="#" method="post">
+        <label for="name">الاسم:</label>
+        <input type="text" name="name" id="name" required>
+        
+        <label for="email">البريد الإلكتروني:</label>
+        <input type="email" name="email" id="email" required>
+        
+        <label for="number">رقم الهاتف:</label>
+        <input type="text" name="number" id="number" required>
+        
+        <label for="age">العمر:</label>
+        <input type="text" name="age" id="age" required>
+        
+        <label>المؤهل:</label>
+        <label><input type="radio" name="qualification" value="student">طالب</label><br>
+        <label><input type="radio" name="qualification" value="military">عسكري</label><br>
+        <label><input type="radio" name="qualification" value="teacher">مدرس</label><br>
+        <label><input type="radio" name="qualification" value="other">أخرى</label><br>
+        
+        <input type="submit" name="submit" valu
   <?php
 }
 ////////////////////////////////////////////////
