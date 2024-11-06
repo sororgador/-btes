@@ -98,7 +98,7 @@ public function formInsert($conn)
   <?php
 }
 ////////////////////////////////////////////////////////
- public function validateFormInsert($conn) 
+public function validateFormInsert($conn) 
 {
     $errors = [];
 
@@ -122,28 +122,23 @@ public function formInsert($conn)
 ////////////////////////////////////////////////////////////
 public function callvalidateFormInsert($conn)
 {
-  
- // استدعاء دالة التحقق من الصحة
+    // استدعاء دالة التحقق من الصحة
     $errors = $this->validateFormInsert($conn);
 
-    // إذا كانت البيانات صحيحة، يمكنك إدخالها في قاعدة البيانات
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && empty($errors)) {
-       
-        $name = htmlspecialchars($_POST['name']);
-        $email = htmlspecialchars($_POST['email']);
-
-        echo "<p style='color:green;'>تمت إضافة البيانات بنجاح!</p>";
-    }
-
-    // عرض الأخطاء إذا كانت موجودة
-    if (!empty($errors)) 
-  {
-        foreach ($errors as $error)
-    {
+    // إذا كانت هناك أخطاء، عرضها وعدم إجراء عملية الإدخال
+    if (!empty($errors)) {
+        // عرض الأخطاء للمستخدم
+        foreach ($errors as $error) {
             echo "<p style='color:red;'>$error</p>";
         }
-       $errors = $this->formInsert($conn);
-    }
+        
+        // إعادة عرض النموذج مع القيم المدخلة
+        $this->formInsert($conn);
+        return; // لا نكمل في حالة وجود أخطاء
+    } 
+
+    // إذا كانت المدخلات صحيحة، استدعاء دالة الإدخال
+    $this->insert($conn);
 }
 ////////////////////////////
 public function insert($conn)
