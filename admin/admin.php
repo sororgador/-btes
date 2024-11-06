@@ -1,3 +1,6 @@
+<?php
+include_once(connection.php);
+include_once(users.php);
 class Admin extends User {
 	/////////////////////////////////////////////
 public function check($conn)
@@ -217,3 +220,5 @@ public function deleteadmin($conn)
   <?php 
 }
 }///end class 
+// إنشاء كائن من كلاس Admin
+$admin = new Admin("AdminUser", 2, "admin@example.com", "adminPass");
