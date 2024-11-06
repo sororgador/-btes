@@ -18,19 +18,18 @@ class Customer extends User {
 public function register_form()
 {
 	?>
-	 <div class="form">
-	      <h2>create an account</h2>
+	<div class="form">
+    <h2>إنشاء حساب</h2>
     <form method="post" action="#">
-      <label for="name">Username:</label>
-      <input type="text" id="name" name="name">
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password">
-	  <label for="password">Password again:</label>
-      <input type="password" id="password" name="password2">
-      <input type="submit" name="submit" value="submit">
-	 
+        <label for="name">اسم المستخدم:</label>
+        <input type="text" id="name" name="name" required>
+        <label for="password">كلمة المرور:</label>
+        <input type="password" id="password" name="password" required>
+        <label for="password2">أعد إدخال كلمة المرور:</label>
+        <input type="password" id="password2" name="password2" required>
+        <input type="submit" name="submit" value="إرسال">
     </form>
-  </div>
+</div>
 	<?php
 
 }
@@ -253,5 +252,64 @@ $conn = null;
 }//////end class
 
 // إنشاء كائن من كلاس Customer
+
 $customer = new Customer("JohnDoe", 1, "john@example.com", "password123", 
                          "John Doe", "1234567890", 30, "Bachelor's");
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنشاء حساب</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        .form h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+        .form label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .form input[type="text"],
+        .form input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .form input[type="submit"] {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        .form input[type="submit"]:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
