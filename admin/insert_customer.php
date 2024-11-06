@@ -1,12 +1,13 @@
 <?php
 include_once("connection.php");
 include_once("users.php");
+
+
+// استدعاء دالة التحقق والإدخال
 $customer->clallvlidatinsert($conn);
-if(!isset($_POST['insert']))
-{
-  echo $customer->formInsertCustomer($conn);
-}
-else{
-  echo $customer->insert($conn);
-  $_SESSION['qualification']=$_POST['qualification'];
-}
+
+// إذا لم يتم الضغط على زر الإرسال، نعرض النموذج
+if (!isset($_POST['insert'])) {
+    echo $customer->formInsertCustomer($conn);
+} 
+?>
