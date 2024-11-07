@@ -55,15 +55,76 @@ $conn = null;
 }
 ////////////////////////////////////////////////////
 //-------------------delete-------------------
-public function displayformsearch($conn) 
-{
-?>
-   <form action="#" method="post">
-   search: <input type="text" name="id">
-   <input type="submit" name="search">
-   </form>
-  <?php 
+public function displayformsearch($conn)
+{?>
+  <form method="post" action="#">
+     <select name="discount">
+         <option></option>
+           <?php $this->fillIn($conn);?>
+     </select>
+    <input type="submit" name="select" value="select discount">
+  </form>
+	<?php
 }
+//////////////////////////////////////////////////////
+public function fillIn($conn)
+{
+	  try
+      {
+        $sql="SELECT * FROM discount";
+        $rows=$conn->query($sql);
+      if($rows->rowCount() != 0)
+	  {	 
+        while($row=$rows->fetch(PDO::FETCH_OBJ))
+         {   
+             ?> <option value="<?php echo $row->discount_id;?>"/>
+			 <?php echo $row->type , "      "  ,$row->discount_value;?></option><?php 
+         }
+       }
+	   else
+	   {  
+         echo "NO RECORDS";
+	   }
+	  }
+     catch(PDOException $e)
+     {
+     echo $sql . "<br>" . $e->getMessage();
+     }
+  
+
+}
+//////////////////////////////////////////////
+public function deleteDiscount($conn)
+{
+   $id=$_POST['discount'];
+   try{
+  $sql="SELECT * FROM discount where discount_id='$id' ";
+  $row=$conn->query($sql);
+  $row1=$row->fetch(PDO::FETCH_OBJ);
+  $n=$row->rowCount();
+   }
+     catch(PDOException $e)
+    {
+        echo $sql . "<br>" . $e->getMessage();
+    }
+  if($n != 0)
+  {	  
+   try{
+     $sql="delete from discount where discount_id='$id' ";
+     $conn->exec($sql);
+	 echo "delete is done";
+      }
+   catch(PDOException $e)
+    {
+        echo $sql . "<br>" . $e->getMessage();
+    }
+  }
+  else{
+	  echo "NOT FOUND";
+  }
+
+}
+
 //////////////////////////////////////////////
 public function deleteDiscount($conn)
 {
