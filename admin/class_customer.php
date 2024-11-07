@@ -28,6 +28,7 @@ public function register_form()
         <label for="password2">أعد إدخال كلمة المرور:</label>
         <input type="password" id="password2" name="password2" required>
         <input type="submit" name="submit" value="إرسال">
+	     <a href="sign_customer.php">لديك حساب سابق !</a>
     </form>
 </div>
 	<?php
@@ -119,8 +120,7 @@ public function check($conn)
 	while($row=$rows->fetch(PDO::FETCH_OBJ))
 	{
 		if(($row->username == $u) && ($row->Password == $p))
-		{ 
-	       header('LOCATION:  /get/ /.php');// تعديل
+		{
 			$flag=1;   break;
 		}
 	}
@@ -137,7 +137,8 @@ public function check($conn)
   if($flag==0){ echo " ادخالك غير صحيح";}
 }
 ////////////////////////////////////////////////////
-?>
+public function formInsertCustomer($conn)
+{
  <div class="form">
     <h2>نموذج البيانات الشخصية</h2>
     <form action="#" method="post">
