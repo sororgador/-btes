@@ -17,7 +17,7 @@ public function check($conn)
 	  {
 		if(($row->username == $u) && ($row->Password == $p ) && (&row->type == $type))
 		{ 
-	            header('LOCATION:  /get/admin/managment.php');// تعديل
+	            header('LOCATION:  /get/admin/managment.php'); 
 			$flag=1;   break;	
 		}
 	   }
