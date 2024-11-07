@@ -289,7 +289,7 @@ public function cancelEvent($conn)
          echo $sql . "<br>" . $e->getMessage();
       }
 	  $this->deleteBooking($conn,$dl);
-	$this->deleteSeats($conn,$dl);
+	  $this->deleteSeats($conn,$dl);
 	  $conn = null;      
     }
 ////////////////////////////////////
@@ -303,10 +303,7 @@ public function deleteBooking($conn, $dl)
 	{
 		$sql1="delete from booking where event_id= $dl";
 		$conn->exec($sql1);
-		$ticket_id=$row->ticket_id;
 		?><h2 align="center" > <?php echo "DELETE BOOKING  "; ?> </h2><?php
-		
-		
 	}
     } 
 	catch(PDOException $e)
