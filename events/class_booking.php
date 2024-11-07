@@ -61,19 +61,7 @@ public function showBooking($conn)
     <?php
 }
 
-    public function updateBooking($bookingId, $ticketList, $numOfSeats) {
-        // من المفترض هنا تحديث تفاصيل الحجز
-        // تنفيذ منطق التحديث
-
-        // إرجاع تأكيد التحديث
-        return true; // أو false إذا لم يتم التحديث
-    }
-
-    public function getPayment() {
-        // تحقق من حالة الدفع
-        return $this->payment->isCompleted(); // يفترض أن يوجد دالة isCompleted في كلاس الدفع
-    }
-}//
+}//end class
 $bookingId = 123; // رقم الحجز
 $event = "حفلة موسيقية"; // اسم الحدث
 $payment = 150.00; // المبلغ المدفوع
