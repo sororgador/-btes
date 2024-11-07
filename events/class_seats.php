@@ -16,12 +16,6 @@ class Seats
 		$this->eventId = $eventId;
 	
     }
-/////////////////////////////////////////////////////////
- 
-
-    public function getPriceSeat() {
-        return $this->priceSeat;
-     }
 ///////////////////////////////// دالة تقوم بتعبئة بيانات المقاعد الغير محجوزة وحسب الحدث المختار 
  public function fillIn($conn)
 {
