@@ -187,7 +187,7 @@ catch(PDOException $e)
 ///////////////////////////////////////////////////
 public function deleteadmin($conn)
 {
-  $adminId=$_POST['id'];
+  $adminId=$_POST['admin'];
   try{
   $sql="delete from admin where admin_id = '$adminId'";
     $conn->exec($sql);
@@ -212,6 +212,7 @@ public function deleteadmin($conn)
   </form>
 	<?php	
 }
+//////////////////////////////
 public function fillIn($conn)
 {
 	  try
