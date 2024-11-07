@@ -289,6 +289,7 @@ public function cancelEvent($conn)
          echo $sql . "<br>" . $e->getMessage();
       }
 	  $this->deleteBooking($conn,$dl);
+	$this->deleteSeats($conn,$dl);
 	  $conn = null;      
     }
 ////////////////////////////////////
@@ -304,7 +305,7 @@ public function deleteBooking($conn, $dl)
 		$conn->exec($sql1);
 		$ticket_id=$row->ticket_id;
 		?><h2 align="center" > <?php echo "DELETE BOOKING  "; ?> </h2><?php
-		$this->deleteTicket($conn,$ticket_id);
+		
 		
 	}
     } 
@@ -314,18 +315,18 @@ public function deleteBooking($conn, $dl)
     }	
 }
 /////////////////////////////
-public function deleteTicket($conn,$ticket_id)
+public function deleteSeats($conn,$dl)
 {     
    try{
-        $sql="SELECT * FROM  ticket";
+        $sql="SELECT * FROM  seats";
 	    $rowss=$conn->query($sql);
 	         while($row1=$rowss->fetch(PDO::FETCH_OBJ))
 	        {
-		      $s1="delete from ticket where ticket_id= $ticket_id ";
+		      $s1="delete from seats where event_id= $dl ";
 		      $conn->exec($s1);
 		
 	        }
-			  ?><h2 align="center" > <?php echo "DELETE TICKET"; ?> </h2><?php
+			  ?><h2 align="center" > <?php echo "DELETE seats"; ?> </h2><?php
 	   }
 	        
    catch(PDOException $e)
