@@ -201,14 +201,42 @@ public function deleteadmin($conn)
   
 }
 /////////////////////////////////////////////////
-  public function displayformsearch($conn)
+ public function displayformsearch($conn)
+{?>
+  <form method="post" action="#">
+     <select name="admin">
+         <option></option>
+           <?php $this->fillIn($conn);?>
+     </select>
+    <input type="submit" name="select" value="select admin">
+  </form>
+	<?php	
+}
+public function fillIn($conn)
 {
-?>
-   <form action="#" method="post">
-   search for admin: <input type="text" name="id">
-   <input type="submit" name="search">
-   </form>
-  <?php 
+	  try
+      {
+        $sql="SELECT * FROM admin";
+        $rows=$conn->query($sql);
+      if($rows->rowCount() != 0)
+	  {	 
+        while($row=$rows->fetch(PDO::FETCH_OBJ))
+         {   
+             ?> <option value="<?php echo $row->admin_id;?>"/>
+			 <?php echo $row->admin_name , "      "  ,$row->email;?></option><?php 
+         }
+       }
+	   else
+	   {  
+         echo "NO RECORDS";
+	   }
+	  }
+     catch(PDOException $e)
+     {
+     echo $sql . "<br>" . $e->getMessage();
+     }
+  
+
 }
 }///end class 
 // إنشاء كائن من كلاس Admin
