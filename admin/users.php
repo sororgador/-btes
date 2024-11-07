@@ -137,7 +137,7 @@ function checkToUpdate($conn)
 	
 }
 ///////////////////////////////////////////////////////////// 
-public function formUpdateLogin($conn)
+public function formUpdateLogin()
 { ?>
   <form action="#" method="post">
   name: <input type="text" name="name">
