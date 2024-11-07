@@ -126,37 +126,7 @@ public function deleteDiscount($conn)
 }
 
 //////////////////////////////////////////////
-public function deleteDiscount($conn)
-{
-   $id=$_POST['id'];
-   try{
-  $sql="SELECT * FROM discount where discount_id='$id' ";
-  $row=$conn->query($sql);
-  $row1=$row->fetch(PDO::FETCH_OBJ);
-  $n=$row->rowCount();
-   }
-     catch(PDOException $e)
-    {
-        echo $sql . "<br>" . $e->getMessage();
-    }
-  if($n != 0)
-  {	  
-   try{
-     $sql="delete from discount where discount_id='$id' ";
-     $conn->exec($sql);
-	 echo "delete is done";
-      }
-   catch(PDOException $e)
-    {
-        echo $sql . "<br>" . $e->getMessage();
-    }
-  }
-  else{
-	  echo "NOT FOUND";
-  }
-
-}
-//////////////////////////////////////////////
+ 
  public function formupdate($connn,$discountValue,$discountType,$event_id)
 {?>
    <form method ="post" action="#">
@@ -224,7 +194,7 @@ function get_discount($number,$price)
 {
 	$total=$price*$number;
 	echo $total;
-}+
+}
  
 }//end class
  
