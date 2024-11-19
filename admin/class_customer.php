@@ -251,7 +251,143 @@ catch(PDOException $e)
 
 $conn = null;
 }// end function
+public function displayCustomers($conn)
+{?>
+  <form method="post" action="#">
+     <select name="customer">
+         <option></option>
+           <?php $this->fillInCustomers($conn);?>
+     </select>
+    <input type="submit" name="student" value="select customer">
+  </form>
+	<?php	
+}
+//////////////////////////////////////////
+public function fillInCustomers($conn)
+{    
+      $qual=$_SESSION['qual'];
+	  try
+      {
+        $sql="SELECT * FROM customers WHERE qualification= '$qual' ";
+        $rows=$conn->query($sql);
+      if($rows->rowCount() != 0)
+	  {	 
+        while($row=$rows->fetch(PDO::FETCH_OBJ))
+         {   
+             ?> <option value="<?php echo $row->customer_id;?>"/>
+			 <?php echo $row->customer_name , "      "  ,$row->qualification  , "      "  ,$row->age;?></option><?php 
+         }
+       }
+	   else
+	   {  
+         echo "NO RECORDS";
+	   }
+	  }
+     catch(PDOException $e)
+     {
+     echo $sql . "<br>" . $e->getMessage();
+     }
+  
 
+}
+ public function formupdateCustomers($conn,$customerName,$customerAge,$customerEmail
+			,$qualification,$customerPhone)
+{?>
+  <div class="form">
+    <h2> بيانات العميل السابقة </h2>
+    <form action="#" method="post">
+        <label for="name">الاسم:</label>
+        <input type="text" name="name" id="name" value="<?php echo $customerName ?>" required>
+        
+        <label for="email">البريد الإلكتروني:</label>
+        <input type="email" name="email" id="email" value="<?php echo $customerEmail?>"  required>
+        
+        <label for="number">رقم الهاتف:</label>
+        <input type="text" name="number" id="number" value="<?php echo $customerPhone?>"  required>
+        
+        <label for="age">العمر:</label>
+        <input type="text" name="age" id="age" value="<?php echo $customerAge ?>" required>
+        
+        <label>المؤهل:</label>
+        <label><input type="radio" name="qualification" value="student">طالب</label><br>
+        <label><input type="radio" name="qualification" value="military">عسكري</label><br>
+        <label><input type="radio" name="qualification" value="teacher">مدرس</label><br>
+        <label><input type="radio" name="qualification" value="other">أخرى</label><br>
+        
+        <input type="submit" name="submit" value="DONE">
+	  <button type="submit" name="delete" class="btn btn-danger btn-large">DELETE</button>
+  <?php
+}
+
+ 
+////////////////////////////////////
+public function dataEditCustomers($conn)
+{
+	$_SESSION['id']=$_POST['customer'];
+	$customerId=$_SESSION['id']; 
+	   try
+    {
+       $sql="SELECT * FROM customers where customer_id='$customerId' ";
+	   $rows=$conn->query($sql);
+	   if($rows->rowCount() != 0)
+	   {
+       $row=$rows->fetch(PDO::FETCH_OBJ);
+            $customerName=$row->customer_name;
+           $customerAge= $row->age;
+             $customerQualification=$row->qualification;
+            $customerEmail=$row->email;
+            $customerPhone=$row->phone_num;
+			$this->formupdateCustomers($conn,$customerName,$customerAge,$customerEmail
+			,$qualification,$customerPhone);
+	   }
+       else 
+	   {
+		   echo "not found";
+	   }		   
+    }
+   catch(PDOException $e) 
+   {
+    echo "Error: " . $e->getMessage();
+   }  
+	
+}
+/////////////////////////////////////////////////////////
+public function updatecustomers($conn)
+{
+$customerId=$_SESSION['id'];
+$customerName=$_POST['name'];
+$customerAge=$_POST['age'];
+$customerQualification=$_POST['qualification'];
+$customerEmail=$_POST['email'];
+$customerPhone=$_POST['number'];
+   try
+    {
+       $query="UPDATE customers SET customer_name='$customerName' , age='$customerAge' 
+	   , qualification='$customerQualification' , phone_num='$customerPhone'
+	   , email='$customerEmail' where customer_id='$customerId' ";
+       $conn->exec($query);
+       echo "Record update successfully";
+    }
+   catch(PDOException $e) 
+   {
+    echo "Error: " . $e->getMessage();
+   }  
+}
+public function deleteCustomers($conn)
+{
+	$customerId=$_SESSION['id']; 
+  try{
+  $sql="delete from customers where customer_id='$customerId'";
+    $conn->exec($sql);
+    echo "delete is done";
+  }
+  catch(PDOException $e)
+    {
+    echo $sql . "<br>" . $e->getMessage();
+    }
+  $conn = null;
+  
+}
 }//////end class
 
 // إنشاء كائن من كلاس Customer
