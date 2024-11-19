@@ -66,6 +66,50 @@ public function displayEvent($conn)
     }
 }
 //////////////////////////////////////
+	///////displaywithreveiw//////////
+  
+public function displayEventWithReviews($conn)//دالة لعرض الاحداث بأزرار عرض التقييمات و التقييم
+{
+    try {
+        $sql = "SELECT * FROM events";//جلب الاحداث المتوفرة
+        $rows = $conn->query($sql);
+        
+        while ($row = $rows->fetch(PDO::FETCH_OBJ)) 
+	{
+            echo $row->title . "<br>" . $row->event_date . "<br>" . $row->event_time . "<br>" . $row->location . "<br>" 
+                 . $row->seats_number . "<br>" . $row->description . "<br>";
+            
+            echo '<div class="event">';
+            
+            // نموذج إضافة التقييم
+            echo '<form method="POST" action="#">
+                    <label for="rating">تقييم الحدث:</label>
+                    <select name="rating" id="rating">
+		        <option></option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                    <input type="hidden" name="event_id" value="' . $row->event_id . '">
+                    <input type="submit" value="تقييم" name="enter">
+                </form>';
+            
+            // نموذج عرض التقييمات
+            echo '<form method="POST" action="#">
+                    <input type="hidden" name="id" value="' . $row->event_id . '">
+                    <input type="submit" value="عرض تقييمات" name="ok">
+                </form>';
+            
+            echo "<hr>";
+            echo '</div>';
+        }
+    } catch (Exception $e) {
+        echo "Error: " . $e->getMessage();
+    }
+}
+/////// end displaywithreveiw//////////
 public function display($conn)
 {?>
   <form method="post" action="#">
