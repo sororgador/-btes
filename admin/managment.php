@@ -1,4 +1,4 @@
- <html>
+<html>
 <body>
 <?php session_start();?>
 
@@ -11,15 +11,22 @@
       <li>
         <button type="submit" name="admin" class="btn btn-secondary btn-large">managment admin</button>
       </li>
+	  <li>
+        <button type="submit" name="user" class="btn btn-secondary btn-large">managment user</button>
+      </li>
     </ul>
   </form>
 </div>
 <?php
 if(isset($_POST['event']))
 {
-	header('LOCATION: /get/events/event_manage.php');	
+	header('LOCATION: /get/events/event_manage_form.php');	
 }
 if(isset($_POST['admin']))
+{
+	header('LOCATION: admin_managment.php');	
+}
+if(isset($_POST['user']))
 {
 	header('LOCATION: user_managment.php');	
 }
