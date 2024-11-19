@@ -14,5 +14,10 @@ include_once("class_event.php");
     }
 
 echo $event->displayEvent($conn);
+?>
+  <form  action="/get/admin/login_review.php" method="POST">
+  <input type="submit" name="add" value="Add review">
+  </form>
+  <?php
  
 ?>
