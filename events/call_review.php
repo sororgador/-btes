@@ -9,39 +9,43 @@ include_once("event.php");
 // إضافة التقييمات
 
 ///////////////////////
-if (isset($_POST['enter'])) {
-    if (isset($_POST['event_id']) && isset($_POST['rating'])) {
+if (isset($_POST['enter'])) //التأكد انه تم الضعط على زر تقييم 
+{
+    if (isset($_POST['event_id']) && isset($_POST['rating'])) //التأكد انه تم وضع كل من التقييم ورقم الحدث المراد تقييمه في مصفوفة post
+    { 
         $eventId = $_POST['event_id'];
         $rating = $_POST['rating'];
 
-        // التأكد من أن الجلسة قد تم بدءها
-        
-        
         // التحقق من وجود اسم المستخدم في الجلسة
-        if (isset($_SESSION['username'])) {
-			
+        if (isset($_SESSION['username']))
+	{	
             $username = $_SESSION['username']; // الحصول على اسم المستخدم من الجلسة
-            
             // استدعاء دالة إضافة التقييم
             $review->addReview($conn, $eventId, $rating, $username);
-			 header('Location: /get/events/message.php');
-			
-        } else {
+	   header('Location: /get/events/message.php'); //الانتقال لصفة لطباعة رسالة 		
+        } 
+	else 
+	{
             echo "لم يتم العثور على اسم المستخدم في الجلسة.";
         }
-    } else {
+    }   
+    else 
+    {
         echo "الرجاء اختيار التقييم.";
     }
-}
+}//end if
 
 // عرض التقييمات
-if (isset($_POST['ok'])) {
-    if (isset($_POST['id'])) {
-        $eventId = $_POST['id'];
-        $review->displayReviews($conn, $eventId);
+if (isset($_POST['ok'])) //التأكد انه تم الضغط على زر عرض التقييمات
+{
+    if (isset($_POST['id'])) //التاكد من وجود رثم الحدث في مصفوفة post
+    {
+        $eventId = $_POST['id']; //الاحتفاظ برقم الحدث
+        $review->displayReviews($conn, $eventId);// استدعاء لدالة لعرض تقييملت الحدث المطلوب
     }
-} else {
-    // عرض الأحداث مع الأزرار
+} else 
+{
+    // عرض الاحدات مع الازرار الخاصة بالتقييم وعرض التقييم
     $event->displayEventWithReviews($conn);
 }
 
