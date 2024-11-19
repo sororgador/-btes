@@ -1,4 +1,3 @@
- 
 <?php
 session_start();
 ?>
@@ -8,29 +7,29 @@ session_start();
   <form class="form" method="post">
     <ul class="form-actions">
       <li>
-        <button type="submit" name="insert" class="btn btn-primary btn-large">INSERT</button>
+        <button type="submit" name="age" class="btn btn-secondary btn-large">BY AGE</button>
       </li>
       <li>
-        <button type="submit" name="edit" class="btn btn-secondary btn-large">EDIT</button>
+        <button type="submit" name="qual" class="btn btn-danger btn-large">BY QUALIFICATION</button>
       </li>
-      <li>
-        <button type="submit" name="delete" class="btn btn-danger btn-large">DELETE</button>
+	    <li>
+        <button type="submit" name="rate" class="btn btn-danger btn-large">BY RATING</button>
       </li>
     </ul>
   </form>
 </div>
 <?php
-if(isset($_POST['insert']))
+if(isset($_POST['age']))
 {
-	header('LOCATION: insert_user.php');	
+	header('LOCATION: user_age.php');	
 }
-if(isset($_POST['delete']))
+if(isset($_POST['qual']))
 {
-	header('LOCATION: delete_user.php');	
+	header('LOCATION:  user_qual.php');	
 }
-if(isset($_POST['edit']))
+if(isset($_POST['rate']))
 {
-	header('LOCATION: update_admin.php');	
+	header('LOCATION:  user_rate.php');	
 }
  
 
