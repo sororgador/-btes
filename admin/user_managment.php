@@ -6,19 +6,26 @@ session_start();
 <div class="form-container">
   <form class="form" method="post">
     <ul class="form-actions">
-      <li>
-        <button type="submit" name="age" class="btn btn-secondary btn-large">BY AGE</button>
+	  <li>
+        <button type="submit" name="all" class="btn btn-secondary btn-large">ALL CUSTOMERS</button>
       </li>
       <li>
-        <button type="submit" name="qual" class="btn btn-danger btn-large">BY QUALIFICATION</button>
+        <button type="submit" name="age" class="btn btn-secondary btn-large">CUSTOMERS BY AGE</button>
+      </li>
+      <li>
+        <button type="submit" name="qual" class="btn btn-danger btn-large">CUSTOMERS BY QUALIFICATION</button>
       </li>
 	    <li>
-        <button type="submit" name="rate" class="btn btn-danger btn-large">BY RATING</button>
+        <button type="submit" name="rate" class="btn btn-danger btn-large">CUSTOMERS BY RATING</button>
       </li>
     </ul>
   </form>
 </div>
 <?php
+if(isset($_POST['all']))
+{
+	header('LOCATION: user_all.php');	
+}
 if(isset($_POST['age']))
 {
 	header('LOCATION: user_age.php');	
