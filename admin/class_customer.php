@@ -263,14 +263,59 @@ public function displayCustomers($conn)
 	<?php	
 }
 //////////////////////////////////////////
-public function displayCustomers($conn)
+public function displayCustomersAll($conn)
 {
     // بدء نموذج اختيار العميل
     ?>
     <form method="post" action="#">
         <select name="customer">
             <option></option>
-            <?php $this->fillInCustomers($conn); // ملء قائمة العملاء ?>
+            <?php $this->fillInCustomersAll($conn); // ملء قائمة العملاء ?>
+        </select>
+        <input type="submit" name="all" value="اختيار عميل لتعديل بياناته">
+        <button type="submit" name="report" class="btn btn-danger btn-large">طباعة قائمة باسماء العملاء</button>
+    </form>
+    <?php	
+}
+
+//////////////////////////////////////////
+public function fillInCustomersAll($conn)
+{       
+    try {
+        // استعلام لجلب العملاء حسب المؤهل
+        $sql = "SELECT * FROM customers";
+        $rows = $conn->query($sql);
+        
+        if ($rows->rowCount() != 0) {	 
+            // حلقة لجلب بيانات العملاء
+            while ($row = $rows->fetch(PDO::FETCH_OBJ)) {   
+                ?>
+                <option value="<?php echo $row->customer_id; ?>">
+                <?php 
+                // عرض اسم العميل ومؤهله وعمره
+                echo $row->customer_name, " ", $row->qualification, " ", $row->age; 
+                ?>
+                </option>
+                <?php 
+            }
+        } else {  
+            echo "NO RECORDS"; // رسالة في حال عدم وجود سجلات
+        }
+    } catch (PDOException $e) {
+        // التعامل مع الأخطاء
+        echo $sql . "<br>" . $e->getMessage();
+    }
+}
+
+////////////////////////////////////////////
+public function displayCustomersQual($conn)
+{
+    // بدء نموذج اختيار العميل
+    ?>
+    <form method="post" action="#">
+        <select name="customer">
+            <option></option>
+            <?php $this->fillInCustomersQual($conn); // ملء قائمة العملاء ?>
         </select>
         <input type="submit" name="qual" value="اختيار عميل لتعديل بياناته">
         <button type="submit" name="report" class="btn btn-danger btn-large">طباعة قائمة باسماء العملاء</button>
@@ -279,7 +324,7 @@ public function displayCustomers($conn)
 }
 
 //////////////////////////////////////////
-public function fillInCustomers($conn)
+public function fillInCustomersQual($conn)
 {    
     // الحصول على المؤهل من الجلسة
     $qual = $_SESSION['qual'];
@@ -319,8 +364,7 @@ public function displayCustomersAge($conn)
         <select name="customer">
             <option></option>
             <?php $this->fillInCustomersAge($conn); // ملء قائمة العملاء حسب العمر ?>
-        </select>
-		 
+        </select> 
         <input type="submit" name="age" value="اختيار عميل لتعديل بياناته">
 		<button type="submit" name="report" class="btn btn-danger btn-large">
 		طباعة قائمة باسماء العملاء</button>
@@ -388,7 +432,7 @@ public function formupdateCustomers($conn, $customerName, $customerAge, $custome
             <label><input type="radio" name="qualification" value="teacher">مدرس</label><br>
             <label><input type="radio" name="qualification" value="other">أخرى</label><br>
             
-            <input type="submit" name="submit" value="DONE">
+            <input type="submit" name="submit" value="UPDATE">
             <button type="submit" name="delete" class="btn btn-danger btn-large">DELETE</button>
         <?php
 }
@@ -416,7 +460,7 @@ public function dataEditCustomers($conn)
             // عرض نموذج التحديث
             $this->formupdateCustomers($conn, $customerName, $customerAge, $customerEmail, $customerQualification, $customerPhone);
         } else {
-            echo "not found"; // رسالة في حال عدم العثور على العميل
+            echo "not found "; // رسالة في حال عدم العثور على العميل
         }		   
     } catch (PDOException $e) {
         // التعامل مع الأخطاء
@@ -467,7 +511,7 @@ public function deleteCustomers($conn)
 }
 
 //////////////////////// طباعة قائمة
-public function displayReport($conn)
+public function displayReportQual($conn)
 {
     // الحصول على المؤهل من الجلسة
     $qual = $_SESSION['qual'];
@@ -493,7 +537,31 @@ public function displayReport($conn)
         echo $sql . "<br>" . $e->getMessage();
     }
 }
-
+///////////////////////////////////////////
+public function displayReportAll($conn)
+{ 
+    
+    try {
+        // استعلام لجلب العملاء حسب المؤهل
+        $sql = "SELECT * FROM customers";
+        $rows = $conn->query($sql);
+        
+        while ($row = $rows->fetch(PDO::FETCH_OBJ)) {
+            // عرض بيانات العميل
+            echo '<div class="event">';
+            echo '<h3>' . 'customer name:' . htmlspecialchars($row->customer_name) . '</h3>';
+            echo ' customer age: ' . htmlspecialchars($row->age) . '<br>';
+            echo ' phone Number:' . htmlspecialchars($row->phone_num) . '<br>';
+            echo ' qualification:' . htmlspecialchars($row->qualification) . '<br>';
+            echo ' email: ' . htmlspecialchars($row->email) . '<br>';
+            echo '<hr>';
+            echo '</div>';
+        }
+    } catch (PDOException $e) {
+        // التعامل مع الأخطاء
+        echo $sql . "<br>" . $e->getMessage();
+    }
+}
 //////////////////////////////////////////
 public function displayReportAge($conn)
 {
@@ -522,12 +590,13 @@ public function displayReportAge($conn)
         echo $sql . "<br>" . $e->getMessage();
     }
 }
+}
 }//////end class
 
 // إنشاء كائن من كلاس Customer
 
-$customer = new Customer("JohnDoe", 1, "john@example.com", "password123", 
-                         "John Doe", "1234567890", 30, "Bachelor's");
+$customer = new Customer("", 0, "", "", 
+                         " ",  "",0, "");
 <!DOCTYPE html>
 <html lang="ar">
 <head>
