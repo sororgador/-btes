@@ -1,6 +1,3 @@
-<?php
-session_start();
-?>
 <html>
 <body>
 <div class="form-container">
