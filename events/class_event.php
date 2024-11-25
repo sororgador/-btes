@@ -1,6 +1,6 @@
 <?php
  
-include_once("connection.php");
+include_once("\get\connection.php");
 include_once("class_seats.php");
 class Event {
     private $eventId;
