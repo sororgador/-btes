@@ -1,23 +1,23 @@
+<html>
+<body>
+<div class="form-container">
+    <form class="form" method="post">
+        <button type="submit" name="add" class="btn btn-primary btn-large">Add review</button>
+        <button type="submit" name="fav" class="btn btn-secondary btn-large">قائمة المفضلة</button>
+    </form>
+</div>
+</body>
+</html>
+
 <?php
- 
-include_once("connection.php");
-include_once("class_event.php");
- if(!isset($_POST['search']))
- {
-	 $event->displayformsearch($conn);
- }
+if (isset($_POST['add'])) {
+    header('Location: login_review.php'); // استخدم "Location" بحروف كبيرة
+    exit; // تأكد من الخروج بعد استخدام header
+}
+if (isset($_POST['fav'])) {
+    header('Location: login_fav.php'); // تأكد من عدم وجود ".php" مرتين
+    exit; // تأكد من الخروج بعد استخدام header
+}
 
-  else if(isset($_POST['search']))  
-	{
-		 $event->search($conn);
-		 
-    }
-
-echo $event->displayEvent($conn);
-?>
-  <form  action="/get/admin/login_review.php" method="POST">
-  <input type="submit" name="add" value="Add review">
-  </form>
-  <?php
- 
+ob_end_flush(); // إرسال المحتوى المخزن
 ?>
