@@ -3,6 +3,21 @@ session_start();
 ob_start();
 include_once("connection.php");
 include_once("class_fav.php"); 
+ function formLoginFav()//دالة بها نموذج لتسجل دخول المستخدم عند اضافة تقييم
+{?>
+	  <div class="form">
+	      <h2>login</h2>
+      <form method="post" action="#">
+      <label for="name">Username:</label>
+      <input type="text" id="name" name="name">
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password">
+      <input type="submit" name="login" value="LOGIN">
+    </form>
+  </div>
+	<?php
+}
+
    if (isset($_POST['login'])) {
     $username = $_POST['name'];
     $password = $_POST['password'];
@@ -23,7 +38,7 @@ include_once("class_fav.php");
     }
   }
 else{
-	$fav->formLoginFav();
+     formLoginFav();
 	}
 	
 ?>
