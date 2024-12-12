@@ -4,9 +4,9 @@ include_once("connection.php");
 include_once("class_fav.php");
  if(isset($_POST['delete']))
  {
-	  $fav-> delete_favorites($conn);
+	  $fav-> deleteFavorites($conn);
 	  }
  else{
- $fav->display_favorites_delete($conn);
+ $fav->displayFavoritesDelete($conn);
  }
 ?>
