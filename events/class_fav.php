@@ -84,7 +84,7 @@ class Fav {
     }
 
     // دالة لعرض نموذج البحث عن المفضلات
-    public function search_view_form_checkbox($conn) {
+    public function searchViewFormCheckbox($conn) {
         $name = $_SESSION['username']; // الحصول على اسم المستخدم من الجلسة
 
         try {
@@ -126,7 +126,7 @@ class Fav {
     } // نهاية الدالة
 
     // دالة لعرض المفضلات وحذفها
-    public function display_favorites_delete($conn) {
+    public function displayFavoritesDelete($conn) {
         $username = $_SESSION['username']; // الحصول على اسم المستخدم من الجلسة
 
         try {
@@ -145,7 +145,7 @@ class Fav {
                 echo "<form method='post' action='#'>"; // نموذج حذف المفضلات
                 echo "<table border='1'>";
                 echo "<tr><th>اختر</th><th>عنوان المفضل</th></tr>";
-
+           ?><form method="post" action="#"><?php
                 // عرض العناوين في جدول
                 foreach ($favorites as $favorite) {
                     echo "<tr>";
@@ -166,7 +166,7 @@ class Fav {
     }
 
     // دالة لحفظ المفضلات
-    public function save_fav($conn) {
+    public function saveFav($conn) {
         if (isset($_POST['titles']) && is_array($_POST['titles'])) { // التحقق مما إذا كانت العناوين موجودة
             $titles = $_POST['titles']; // الحصول على العناوين
             $username = $_SESSION['username']; // الحصول على اسم المستخدم
@@ -197,7 +197,7 @@ class Fav {
     }
 
     // دالة لحذف المفضلات
-    public function delete_favorites($conn) {
+    public function deleteFavorites($conn) {
         $username = $_SESSION['username']; // الحصول على اسم المستخدم
 
         if (isset($_POST['titles']) && is_array($_POST['titles'])) { // التحقق مما إذا كانت العناوين موجودة
@@ -217,7 +217,7 @@ class Fav {
     }
 
     // دالة لعرض المفضلات
-public function display_favorites($conn) {
+public function displayFavorites($conn) {
     $username = $_SESSION['username']; // الحصول على اسم المستخدم
 
     // استعلام لجلب كافة بيانات الأحداث المرتبطة بالمفضلات للمستخدم
