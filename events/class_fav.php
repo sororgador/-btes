@@ -217,29 +217,48 @@ class Fav {
     }
 
     // دالة لعرض المفضلات
-    public function display_favorites($conn) {
-        $username = $_SESSION['username']; // الحصول على اسم المستخدم
+public function display_favorites($conn) {
+    $username = $_SESSION['username']; // الحصول على اسم المستخدم
 
-        $sql = "SELECT title FROM favorites WHERE username = :username"; // استعلام لجلب المفضلات
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':username', $username); // ربط اسم المستخدم
-        $stmt->execute();
-        $favorites = $stmt->fetchAll(PDO::FETCH_ASSOC); // الحصول على النتائج
+    // استعلام لجلب كافة بيانات الأحداث المرتبطة بالمفضلات للمستخدم
+    $sql = "SELECT events.title, events.event_date, events.event_time, events.location, events.seats_number, events.description 
+            FROM favorites 
+            JOIN events ON favorites.title = events.title 
+            WHERE favorites.username = :username"; 
+            
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':username', $username); // ربط اسم المستخدم
+    $stmt->execute();
+    $favorites = $stmt->fetchAll(PDO::FETCH_ASSOC); // الحصول على النتائج
 
-        if (count($favorites) > 0) { // التحقق من وجود مفضلات
-            echo "<h2>قائمة المفضلات الخاصة بك</h2>";
-            echo "<table border='1'>";
-            echo "<tr><th>عنوان المفضل</th></tr>";
+    if (count($favorites) > 0) { // التحقق من وجود مفضلات
+        echo "<h2>قائمة المفضلات الخاصة بك</h2>";
+        echo "<table border='1'>";
+        echo "<tr>
+                <th>عنوان الحدث</th>
+                <th>تاريخ الحدث</th>
+                <th>وقت الحدث</th>
+                <th>الموقع</th>
+                <th>عدد المقاعد</th>
+                <th>الوصف</th>
+              </tr>";
 
-            foreach ($favorites as $favorite) {
-                echo "<tr><td>" . htmlspecialchars($favorite['title']) . "</td></tr>"; // عرض عنوان المفضل
-            }
-
-            echo "</table>";
-        } else {
-            echo "لا توجد مفضلات."; // إذا لم توجد مفضلات
+        foreach ($favorites as $favorite) {
+            echo "<tr>
+                    <td>" . htmlspecialchars($favorite['title']) . "</td>
+                    <td>" . htmlspecialchars($favorite['event_date']) . "</td>
+                    <td>" . htmlspecialchars($favorite['event_time']) . "</td>
+                    <td>" . htmlspecialchars($favorite['location']) . "</td>
+                    <td>" . htmlspecialchars($favorite['seats_number']) . "</td>
+                    <td>" . htmlspecialchars($favorite['description']) . "</td>
+                  </tr>"; // عرض تفاصيل الحدث
         }
+
+        echo "</table>";
+    } else {
+        echo "لا توجد مفضلات."; // إذا لم توجد مفضلات
     }
+}
 }
 
 // استخدام الكود
