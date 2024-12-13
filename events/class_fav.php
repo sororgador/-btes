@@ -19,22 +19,33 @@ class Favorite implements FavoriteInterface {
         $this->title = $title;       // تعيين عنوان المفضل
     }
 
-    // دالة لحفظ المفضل في قاعدة البيانات
-    public function save($conn) {
+  // دالة لحفظ المفضل في قاعدة البيانات
+public function save($conn) {
+    try {
         $sql = "INSERT INTO favorites (username, title) VALUES (:username, :title)";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':username', $this->username); // ربط اسم المستخدم
         $stmt->bindParam(':title', $this->title);       // ربط عنوان المفضل
         return $stmt->execute(); // تنفيذ الاستعلام وإرجاع النتيجة
+    } catch (PDOException $e) {
+        // يمكنك تسجيل الخطأ أو معالجته هنا
+        echo "خطأ في حفظ المفضل: " . $e->getMessage();
+        return false; // إرجاع false في حالة حدوث خطأ
     }
+}
 
-    // دالة لحذف المفضل من قاعدة البيانات
-    public function delete($conn) {
+// دالة لحذف المفضل من قاعدة البيانات
+public function delete($conn) {
+    try {
         $sql = "DELETE FROM favorites WHERE username = :username AND title = :title";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':username', $this->username); // ربط اسم المستخدم
         $stmt->bindParam(':title', $this->title);       // ربط عنوان المفضل
         return $stmt->execute(); // تنفيذ الاستعلام وإرجاع النتيجة
+    } catch (PDOException $e) {
+        // يمكنك تسجيل الخطأ أو معالجته هنا
+        echo "خطأ في حذف المفضل: " . $e->getMessage();
+        return false; // إرجاع false في حالة حدوث خطأ
     }
 }
 
