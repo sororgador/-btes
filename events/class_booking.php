@@ -1,96 +1,150 @@
 <?php 
-include_once("connection.php");
- 
- @session_start();
+include_once("connection.php"); 
 
+// فئة الحجز باستخدام Singleton
 class Booking {
-    private $bookingId;
-    private $bookingDate;
-    private $event;
-    private $payment;
+    private $bookingId; // معرف الحجز
+    private $bookingDate; // تاريخ الحجز
+    private $event; // الحدث المرتبط بالحجز
+    private $payment; // حالة الدفع
+    private static $instance = null; // كائن واحد فقط من فئة Booking (نمط Singleton)
 
-    public function __construct($bookingId, $event, $payment) {
+    // دالة البناء الخاصة (private) لتجنب إنشاء كائنات متعددة من نفس الفئة
+    private function __construct($bookingId, $event, $payment) {
         $this->bookingId = $bookingId;
         $this->bookingDate = new DateTime(); // تعيين تاريخ الحجز الحالي
         $this->event = $event;
         $this->payment = $payment;
     }
 
-    public function createBooking($conn) 
-	{
-       $event_id = $_SESSION['event_id'];
-       $customer=$_SESSION['customer_id']; 
-	   $date= date('Y-m-d H:i:s');
-	   try{	
-	
-	$sql="INSERT INTO booking(customer_id,event_id,booking_date)
-	values('$customer', '$event_id','$date')";
-	$conn->exec($sql);
-    echo "Record insert successfully "; 
- 
-}
-catch(PDOException $e)
-    {
-    echo $sql . "<br>" . $e->getMessage();
+    // دالة لإرجاع الكائن الوحيد من Booking (نمط Singleton)
+    public static function getInstance($bookingId = null, $event = null, $payment = null) {
+        if (self::$instance === null) {
+            self::$instance = new Booking($bookingId, $event, $payment); // إذا لم يتم إنشاء الكائن بعد، سيتم إنشاؤه
+        }
+        return self::$instance; // إرجاع الكائن الوحيد
     }
 
-$conn = null;
-    }
-
-public function showBooking($conn) 
-{
-    $title = $_SESSION['eventname'];
-    $customerName = $_SESSION['customer'];
-    $price = $_SESSION['price'];
- 
-
-    // طباعة التذكرة بتنسيق جميل
-?>
-
-    <div class="ticket-container">
-        <h2>تذكرة الحجز</h2>
-        <hr>
-        <p><strong>عنوان الحدث:</strong> <?php echo htmlspecialchars($title); ?></p>
-        <p><strong>اسم العميل:</strong> <?php echo htmlspecialchars($customerName); ?></p>
-        <p><strong>  سعر المقعد:</strong> <?php echo htmlspecialchars($price); ?> dl</p>
+    // دالة لإنشاء الحجز
+    public function createBooking($conn) {
+        $event_id = $_SESSION['event_id']; // جلب معرف الحدث من الجلسة
+        $customer = $_SESSION['customer_id']; // جلب معرف العميل من الجلسة
+        $date = date('Y-m-d H:i:s'); // تعيين تاريخ ووقت الحجز الحالي
         
+        try {
+            // استعلام لإضافة الحجز إلى قاعدة البيانات
+            $sql = "INSERT INTO booking(customer_id, event_id, booking_date) VALUES ('$customer', '$event_id', '$date')";
+            $conn->exec($sql); // تنفيذ الاستعلام
+            $this->notifyObservers("تم إنشاء الحجز بنجاح."); // إخطار المراقبين بتحديث الحجز
+        } catch (PDOException $e) {
+            echo $sql . "<br>" . $e->getMessage(); // التعامل مع الخطأ إذا حدث
+        }
+    }
+    
+    // دالة لعرض الحجوزات
+    public function viewBooking($conn) {
+        $name = $_SESSION['username']; // الحصول على اسم المستخدم من الجلسة
+        
+        try {
+            // استعلام لجلب الحجوزات الخاصة بالمستخدم
+            $sql = "SELECT * FROM booking WHERE customer_name = :customer_name"; 
+            $stmt = $conn->prepare($sql); // تحضير الاستعلام
+            $stmt->bindParam(':customer_name', $name); // ربط المتغيرات في الاستعلام
+            $stmt->execute(); // تنفيذ الاستعلام
+            $n = $stmt->rowCount(); // الحصول على عدد السجلات 
 
-        <hr>
-        <div class="ticket-footer">شكرًا لحجزكم معنا!</div>
-    </div>
-    <?php
+            if ($n > 0) {
+                // إذا كانت هناك حجوزات، سيتم عرض التفاصيل
+                while ($row = $stmt->fetch(PDO::FETCH_OBJ)) {
+                    $id = $row->event_id; // جلب معرف الحدث المرتبط بالحجز
+                    $_SESSION['customer_name'] = $row->customer_name; // تخزين اسم العميل في الجلسة
+                    $sq = "SELECT * FROM events WHERE event_id = :event_id"; // استعلام للحصول على تفاصيل الحدث
+                    $stmt1 = $conn->prepare($sq);
+                    $stmt1->bindParam(':event_id', $id);
+                    $stmt1->execute();
+                    $row1 = $stmt1->fetch(PDO::FETCH_OBJ);
+                    
+                    // عرض تفاصيل الحجز
+                    echo "<div class='booking'>";
+                    echo "<p> عنوان الحدث: " . htmlspecialchars($row1->title) . "</p>";
+                    echo "<p> التاريخ: " . htmlspecialchars($row1->event_date) . "</p>";
+                    echo "<p> الوقت: " . htmlspecialchars($row1->event_time) . "</p>";
+                    echo "<p> الوصف: " . htmlspecialchars($row1->description) . "</p>";
+
+                    // إضافة نموذج لإلغاء الحجز
+                    if (isset($_SESSION['username']) && $_SESSION['username'] == $row->customer_name) {
+                        echo '<form method="POST" action="">
+                                <input type="hidden" name="event_id" value="' . $row1->event_id . '">
+                                <input type="submit" value="الغاء حجز" name="delete_booking">
+                              </form>';
+                    }
+                    echo "</div>";
+                }
+            }
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage(); // التعامل مع الخطأ في حالة حدوثه
+        }
+    }
+
+    // دالة لإلغاء الحجز
+    public function cancelBooking($conn) {
+        if (isset($_POST['delete_booking']) && isset($_POST['event_id'])) {
+            $event_id = $_POST['event_id']; // جلب معرف الحدث لإلغاء الحجز
+            $customer = $_SESSION['username']; // الحصول على اسم العميل من الجلسة
+
+            try {
+                // التحقق من وجود الحجز في قاعدة البيانات
+                $sql = "SELECT * FROM booking WHERE event_id = :event_id AND customer_name = :customer_name";
+                $stmt = $conn->prepare($sql);
+                $stmt->bindParam(':event_id', $event_id, PDO::PARAM_INT);
+                $stmt->bindParam(':customer_name', $customer, PDO::PARAM_STR); // استخدام PARAM_STR لأن customer_name نص
+                $stmt->execute();
+
+                if ($stmt->rowCount() > 0) {
+                    // إذا كان الحجز موجوداً
+                    $booking = $stmt->fetch(PDO::FETCH_ASSOC);
+                    $event_id = $booking['event_id'];
+
+                    // استعلام للحصول على تفاصيل الحدث (التاريخ والوقت)
+                    $sql_event = "SELECT event_date, event_time FROM events WHERE event_id = :event_id";
+                    $stmt_event = $conn->prepare($sql_event);
+                    $stmt_event->bindParam(':event_id', $event_id, PDO::PARAM_INT);
+                    $stmt_event->execute();
+                    $event = $stmt_event->fetch(PDO::FETCH_ASSOC);
+
+                    // دمج التاريخ والوقت للحصول على الوقت الكامل للحدث
+                    $event_datetime = $event['event_date'] . ' ' . $event['event_time'];
+                    $event_datetime = new DateTime($event_datetime);
+                    $current_datetime = new DateTime(); // الوقت الحالي
+
+                    // حساب الفرق بين الوقت الحالي ووقت الحدث
+                    $interval = $event_datetime->diff($current_datetime);
+
+                    // إذا كان الفرق أقل من 24 ساعة، لا يسمح بالإلغاء
+                    if ($interval->h < 24 && $interval->d == 0) {
+                        echo "لا يمكن إلغاء الحجز لأن الحدث سيحدث خلال أقل من 24 ساعة."; // عرض رسالة للمستخدم
+                    } else {
+                        // حذف الحجز من قاعدة البيانات
+                        $delete_sql = "DELETE FROM booking WHERE event_id = :event_id AND customer_name = :customer_name";
+                        $delete_stmt = $conn->prepare($delete_sql);
+                        $delete_stmt->bindParam(':event_id', $event_id, PDO::PARAM_INT);
+                        $delete_stmt->bindParam(':customer_name', $customer, PDO::PARAM_STR);
+                        $delete_stmt->execute(); // تنفيذ الاستعلام للحذف
+                    }
+                } else {
+                    echo "لم يتم العثور على حجز لهذا الحدث."; // إذا لم يتم العثور على الحجز
+                }
+            } catch (PDOException $e) {
+                echo "حدث خطأ أثناء محاولة إلغاء الحجز: " . $e->getMessage(); // التعامل مع الخطأ
+            }
+        } else {
+            echo "لم يتم تحديد الحدث لإلغاء الحجز."; // إذا لم يتم تحديد الحدث
+        }
+    }
+
 }
 
-}//end class
-$bookingId = 123; // رقم الحجز
-$event = "حفلة موسيقية"; // اسم الحدث
-$payment = 150.00; // المبلغ المدفوع
+// استخدام الكود
+$booking = Booking::getInstance(0, "", 0); // الحصول على الكائن الوحيد من Booking
 
-// إنشاء كائن من الكلاس Booking
-$booking = new Booking($bookingId, $event, $payment);
-    ?>
-    <style>
-        .ticket-container {
-            width: 350px;
-            border: 1px solid #007BFF; /* لون الحدود */
-            padding: 20px;
-            margin: 20px auto; /* توسيط */
-            text-align: center;
-            background-color: #f0f8ff; /* خلفية فاتحة */
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* تأثير الظل */
-            font-family: Arial, sans-serif; /* نوع الخط */
-        }
-        .ticket-container h2 {
-            color: #007BFF; /* لون العنوان */
-            margin-bottom: 10px;
-        }
-        .ticket-container p {
-            margin: 5px 0; /* هوامش فقرة */
-            font-size: 16px; /* حجم الخط */
-        }
-        .ticket-footer {
-            margin-top: 20px;
-            font-weight: bold; /* جعل النص بالخط العريض */
-        }
-    </style>
+?>
