@@ -125,7 +125,7 @@ class Fav {
         }			
     } // نهاية الدالة
 
-    // دالة لعرض المفضلات وحذفها
+    // دالة لعرض المفضلات والاختيار منهم للحذف
     public function displayFavoritesDelete($conn) {
         $username = $_SESSION['username']; // الحصول على اسم المستخدم من الجلسة
 
