@@ -81,7 +81,11 @@ class Booking {
                     echo "</div>";
                 }
             }
-        } catch (PDOException $e) {
+            else{
+			echo "ليس لديك حجوزات لتقوم بإلغاءها";
+			}
+        } //try
+        catch (PDOException $e) {
             echo "Error: " . $e->getMessage(); // التعامل مع الخطأ في حالة حدوثه
         }
     }
