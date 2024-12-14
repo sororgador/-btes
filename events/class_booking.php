@@ -1,4 +1,4 @@
-<?php 
+<?php
 include_once("connection.php"); 
 
 // فئة الحجز باستخدام Singleton
@@ -66,10 +66,10 @@ class Booking {
                     
                     // عرض تفاصيل الحجز
                     echo "<div class='booking'>";
-                    echo "<p> عنوان الحدث: " . htmlspecialchars($row1->title) . "</p>";
-                    echo "<p> التاريخ: " . htmlspecialchars($row1->event_date) . "</p>";
-                    echo "<p> الوقت: " . htmlspecialchars($row1->event_time) . "</p>";
-                    echo "<p> الوصف: " . htmlspecialchars($row1->description) . "</p>";
+                    echo "<p><strong>عنوان الحدث:</strong> " . htmlspecialchars($row1->title) . "</p>";
+                    echo "<p><strong>التاريخ:</strong> " . htmlspecialchars($row1->event_date) . "</p>";
+                    echo "<p><strong>الوقت:</strong> " . htmlspecialchars($row1->event_time) . "</p>";
+                    echo "<p><strong>الوصف:</strong> " . htmlspecialchars($row1->description) . "</p>";
 
                     // إضافة نموذج لإلغاء الحجز
                     if (isset($_SESSION['username']) && $_SESSION['username'] == $row->customer_name) {
@@ -82,11 +82,40 @@ class Booking {
                 }
             }
             else{
-			echo "ليس لديك حجوزات لتقوم بإلغاءها";
-			}
-        } //try
-        catch (PDOException $e) {
+                echo "ليس لديك حجوزات لتقوم بإلغاءها";
+            }
+        } catch (PDOException $e) {
             echo "Error: " . $e->getMessage(); // التعامل مع الخطأ في حالة حدوثه
+        }
+    }
+
+    // دالة للتحقق من الوقت بين الوقت الحالي ووقت الحدث
+    public function checkEventTime($event_id, $conn) {
+        try {
+            // استعلام للحصول على تفاصيل الحدث (التاريخ والوقت)
+            $sql_event = "SELECT event_date, event_time FROM events WHERE event_id = :event_id";
+            $stmt_event = $conn->prepare($sql_event);
+            $stmt_event->bindParam(':event_id', $event_id, PDO::PARAM_INT);
+            $stmt_event->execute();
+            $event = $stmt_event->fetch(PDO::FETCH_ASSOC);
+
+            // دمج التاريخ والوقت للحصول على الوقت الكامل للحدث
+            $event_datetime = $event['event_date'] . ' ' . $event['event_time'];
+            $event_datetime = new DateTime($event_datetime);
+            $current_datetime = new DateTime(); // الوقت الحالي
+
+            // حساب الفرق بين الوقت الحالي ووقت الحدث
+            $interval = $event_datetime->diff($current_datetime);
+
+            // إذا كان الفرق أقل من 24 ساعة، لا يسمح بالإلغاء
+            if ($interval->h < 24 && $interval->d == 0) {
+                return false; // لا يسمح بالإلغاء
+            } else {
+                return true; // يسمح بالإلغاء
+            }
+        } catch (PDOException $e) {
+            echo "حدث خطأ أثناء محاولة التحقق من الوقت: " . $e->getMessage(); // التعامل مع الخطأ
+            return false;
         }
     }
 
@@ -109,23 +138,8 @@ class Booking {
                     $booking = $stmt->fetch(PDO::FETCH_ASSOC);
                     $event_id = $booking['event_id'];
 
-                    // استعلام للحصول على تفاصيل الحدث (التاريخ والوقت)
-                    $sql_event = "SELECT event_date, event_time FROM events WHERE event_id = :event_id";
-                    $stmt_event = $conn->prepare($sql_event);
-                    $stmt_event->bindParam(':event_id', $event_id, PDO::PARAM_INT);
-                    $stmt_event->execute();
-                    $event = $stmt_event->fetch(PDO::FETCH_ASSOC);
-
-                    // دمج التاريخ والوقت للحصول على الوقت الكامل للحدث
-                    $event_datetime = $event['event_date'] . ' ' . $event['event_time'];
-                    $event_datetime = new DateTime($event_datetime);
-                    $current_datetime = new DateTime(); // الوقت الحالي
-
-                    // حساب الفرق بين الوقت الحالي ووقت الحدث
-                    $interval = $event_datetime->diff($current_datetime);
-
-                    // إذا كان الفرق أقل من 24 ساعة، لا يسمح بالإلغاء
-                    if ($interval->h < 24 && $interval->d == 0) {
+                    // التحقق من الوقت إذا كان الفرق أقل من 24 ساعة
+                    if (!$this->checkEventTime($event_id, $conn)) {
                         echo "لا يمكن إلغاء الحجز لأن الحدث سيحدث خلال أقل من 24 ساعة."; // عرض رسالة للمستخدم
                     } else {
                         // حذف الحجز من قاعدة البيانات
@@ -134,6 +148,7 @@ class Booking {
                         $delete_stmt->bindParam(':event_id', $event_id, PDO::PARAM_INT);
                         $delete_stmt->bindParam(':customer_name', $customer, PDO::PARAM_STR);
                         $delete_stmt->execute(); // تنفيذ الاستعلام للحذف
+                        echo "تم إلغاء الحجز بنجاح."; // إظهار رسالة تأكيد
                     }
                 } else {
                     echo "لم يتم العثور على حجز لهذا الحدث."; // إذا لم يتم العثور على الحجز
@@ -145,10 +160,54 @@ class Booking {
             echo "لم يتم تحديد الحدث لإلغاء الحجز."; // إذا لم يتم تحديد الحدث
         }
     }
-
 }
 
-// استخدام الكود
 $booking = Booking::getInstance(0, "", 0); // الحصول على الكائن الوحيد من Booking
 
 ?>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        margin: 0;
+        padding: 0;
+    }
+
+    .booking {
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin: 20px;
+        color: #333;
+    }
+
+    .booking p {
+        font-size: 16px;
+        line-height: 1.6;
+    }
+
+    .booking strong {
+        color: #333;
+    }
+
+    form {
+        margin-top: 10px;
+    }
+
+    input[type="submit"] {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+</style>
+
+
