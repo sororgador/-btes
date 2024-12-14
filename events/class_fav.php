@@ -180,8 +180,7 @@ class Fav {
     public function saveFav($conn) {
         if (isset($_POST['titles']) && is_array($_POST['titles'])) { // التحقق مما إذا كانت العناوين موجودة
             $titles = $_POST['titles']; // الحصول على العناوين
-            $username = $_SESSION['username']; // الحصول على اسم المستخدم
-
+            $username = $_SESSION['username'];    
             foreach ($titles as $title) {
                 $favorite = FavoriteFactory::createFavorite($username, $title); // إنشاء مفضل جديد
                 
@@ -192,7 +191,6 @@ class Fav {
                 $checkStmt->bindParam(':title', $title); // ربط عنوان المفضل
                 $checkStmt->execute();
                 $exists = $checkStmt->fetchColumn(); // الحصول على عدد السجلات
-
                 if ($exists == 0) { // إذا لم يكن موجودًا
                     if ($favorite->save($conn)) { // حفظ المفضل
                         $this->notify($favorite, 'added'); // إخطار المراقبين
@@ -273,7 +271,8 @@ public function displayFavorites($conn) {
 }
 
 // استخدام الكود
+ $name = $_SESSION['username'];
 $fav = new Fav(); // إنشاء كائن من فئة Fav
-$fav->addObserver(new User("soror")); // إضافة مستخدم كمراقب
-$fav->addObserver(new User("alaa")); // إضافة مستخدم كمراقب آخر
+$fav->addObserver(new User($name)); // إضافة مستخدم كمراقب
+ 
 ?>
